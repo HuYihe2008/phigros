@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=0;" />
+	<title>正在加载 - Phigros</title>
+	<link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+	<div class="mainContent">
+		<div class="textInfo">
+			<div class="songInfoFrame">
+				<div class="basicInfo">
+					<div class="songName" id="songNameElem"></div>
+					<div class="artist" id="artistElem"></div>
+				</div>
+				<div class="level" data-level="10" id="levelInfoElem">
+					<!-- 10 -->
+				</div>
+			</div>
+			<div class="chartDesigner" id="chartDesignerElem"></div>
+			<div class="illustrator" id="illustratorElem"></div>
+		</div>
+		<div class="songImage">
+			<img src="" id="songImgElem" class="illustration" />
+		</div>
+	</div>
+	<div class="tip" id="tipConteiner">Lorem ipsum dolor sit amet.</div>
+	<div class="loadingBar">
+		<div class="loadingBarTxT">Loading...</div>
+		<div class="loadingBarBG"></div>
+	</div>
+	<script src="../loadingScreen/index.js"></script>
+	<script type="module">
+		const urlParams = new URL(location.href).search;
+		const parsedURLParams = new URLSearchParams(urlParams)
+		const chart = parsedURLParams.get('c');
+		const level = parsedURLParams.get('l').toLowerCase();
+		let songInfoXHR = new XMLHttpRequest();
+		songInfoXHR.open('GET', 'https://charts.pgr.han-han.xyz/' + chart + '/meta.json', false);
+		songInfoXHR.send();
+		const songInfoObj = JSON.parse(songInfoXHR.responseText);
+		document.querySelector('#songNameElem').innerText = songInfoObj.name;
+		document.querySelector('#artistElem').innerText = songInfoObj.artist;
+		document.querySelector('#chartDesignerElem').innerText = songInfoObj.chartDesigner;
+		document.querySelector('#illustratorElem').innerText = songInfoObj.illustrator;
+		document.querySelector('#songImgElem').setAttribute('src', 'https://charts.pgr.han-han.xyz/' + chart + '/' + songInfoObj.illustration);
+		document.body.setAttribute('style', 'background: url(' + 'https://charts.pgr.han-han.xyz/' + chart + '/' + songInfoObj.illustration.replaceAll(' ','%20') + ') center center no-repeat fixed;')
+		document.querySelector('#levelInfoElem').setAttribute('data-level', Math.floor(songInfoObj[level+"Ranking"]));
+		document.querySelector('#levelInfoElem').classList.add(level);
+	</script>
+	<!-- <script src="../assets/autoScale.js"></script> -->
+</body>
+
+</html>
